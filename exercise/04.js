@@ -1,70 +1,88 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export function useLocalStorage(key, initialValue) {
-  const [state, setState] = useState(() => {
-    const storedValue = localStorage.getItem(key);
-    return storedValue ? JSON.parse(storedValue) : initialValue;
-  });
+function getLocalStorageValue(key) {
+  const storedValue = localStorage.getItem(key);
+  try {
+    return JSON.parse(storedValue);
+  } catch {}
+  return storedValue;
+}
+
+function setLocalStorageValue(key, value) {
+  const valueToStore = JSON.stringify(value);
+  localStorage.setItem(key, valueToStore);
+}
+
+export function useLocalStorage(key, initialValue = null) {
+  const storedValue = getLocalStorageValue(key);
+  const [state, setState] = useState(storedValue || initialValue);
 
   useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(state));
+    setLocalStorageValue(key, state);
   }, [key, state]);
+
+  useEffect(() => {
+    function handleChange() {
+      const newValue = getLocalStorageValue(key);
+      setState(newValue);
+    }
+
+    window.addEventListener("storage", handleChange);
+
+    return function cleanup() {
+      window.removeEventListener("storage", handleChange);
+    };
+  }, [key]);
 
   return [state, setState];
 }
 
-function FormWithname() {
-  const [name, setName] = useLocalStorage("name", "");
+export default function App() {
+  return (
+    <div>
+      <h2>useLocalStorage can save string</h2>
+      <Form />
+      <hr />
+      <h2>useLocalStorage can save objects (Bonus)</h2>
+      <FormWithObject />
+    </div>
+  );
+}
 
+function Form() {
+  const [name, setName] = useLocalStorage("_solution_3_username", "");
   return (
     <form style={{ display: "flex", flexDirection: "column" }}>
       <label htmlFor="name">Name:</label>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+      <input value={name} onChange={e => setName(e.target.value)} />
       <h4>{name ? `Welcome, ${name}!` : "Enter your name"}</h4>
     </form>
   );
 }
 
 function FormWithObject() {
-  const [formData, setFormData] = useLocalStorage("formData", {
+  const [formData, setFormData] = useLocalStorage("_solution_3_blog_post", {
     title: "",
     content: "",
   });
 
   function handleChange(e) {
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData(formData => ({
+      ...formData,
       [e.target.name]: e.target.value,
     }));
   }
 
   return (
     <form style={{ display: "flex", flexDirection: "column" }}>
-      <label htmlFor="title">Title:</label>
-      <input
-        name="title"
-        value={formData.title}
-        onChange={handleChange}
-      />
-      <label htmlFor="content">Content:</label>
-      <input
+      <label htmlFor="name">Title:</label>
+      <input name="title" value={formData.title} onChange={handleChange} />
+      <label htmlFor="name">Content:</label>
+      <textarea
         name="content"
         value={formData.content}
         onChange={handleChange}
       />
     </form>
-  );
-}
-
-export default function App() {
-  return (
-    <div>
-      <FormWithname />
-      <FormWithObject />
-    </div>
   );
 }

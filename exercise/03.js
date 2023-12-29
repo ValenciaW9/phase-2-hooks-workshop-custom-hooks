@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export function useMouseCoordinates() {
   const [coordinates, setCoordinates] = useState({
@@ -7,11 +7,8 @@ export function useMouseCoordinates() {
   });
 
   useEffect(() => {
- function handleMouseMove(event) {
-      setCoordinates({
-        clientX: event.clientX,
-        clientY: event.clientY,
-      });
+    function handleMouseMove({ clientX, clientY }) {
+      setCoordinates({ clientX, clientY });
     }
 
     window.addEventListener("mousemove", handleMouseMove);

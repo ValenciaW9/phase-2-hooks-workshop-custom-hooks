@@ -1,15 +1,13 @@
 import { useEffect } from "react";
 
-/* ✅ create a new function called useDocumentTitle */
-export function useDocumentTitle() {
+export function useDocumentTitle(title) {
   useEffect(() => {
-    document.title = "Welcome to the home page!";
-  }, []);
+    document.title = title;
+  }, [title]);
 }
 
-/* 👀 export function useDocumentTitle() {} */
-export default function Home() {
-  useDocumentTitle();
+function Home() {
+  useDocumentTitle("testing");
 
   return (
     <div>
@@ -21,3 +19,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;

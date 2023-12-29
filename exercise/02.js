@@ -1,22 +1,22 @@
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 
-/* ✅ modify this usePokemon custom hook to take in a query as an argument */
 export function usePokemon(query) {
   const [pokemon, setPokemon] = useState(null);
 
   useEffect(() => {
     fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
-      .then((r) => r.json())
+      .then(r => r.json())
       .then(setPokemon);
   }, [query]);
 
-  return { pokemon };
+  return { data: pokemon };
 }
 
 function Pokemon({ query }) {
-  const { pokemon } = usePokemon(query);
+  const { data: pokemon } = usePokemon(query);
 
+  // 🚫 don't worry about the code below here, you shouldn't have to touch it
   if (!pokemon) return <h3>Loading...</h3>;
 
   return (
@@ -24,7 +24,7 @@ function Pokemon({ query }) {
       <h3>{pokemon.name}</h3>
       <img
         src={pokemon.sprites.front_default}
-        alt={`${pokemon.name} front sprite`}
+        alt={pokemon.name + " front sprite"}
       />
     </div>
   );

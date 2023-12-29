@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { useLocalStorage } from "../exercise/04";
-import "jest-localstorage-mock";
+// import { useLocalStorage } from "../solution/04.extra-2";
 
 beforeEach(() => {
   localStorage.clear();
@@ -8,29 +8,27 @@ beforeEach(() => {
   localStorage.setItem.mockClear();
 });
 
-describe("Exercise 04", () => {
-  test("returns an initial state and a setter function", () => {
-    const { result } = renderHook(() => useLocalStorage("test", "value"));
-    expect(result.current).toMatchObject(["value", expect.any(Function)]);
-  });
-
-  test("has an initial value of null of no value is passed in as a second argument", () => {
-    const { result } = renderHook(() => useLocalStorage("test"));
-    expect(result.current).toMatchObject([null, expect.any(Function)]);
-  });
-
-  test("saves the value in localStorage when state is updated", () => {
+describe("Exercise 04 - Bonus 2", () => {
+  test("updates state after storage events", async () => {
     const { result } = renderHook(() => useLocalStorage("test", "old value"));
-    const [, setState] = result.current;
-
-    const newValue = "new value";
 
     act(() => {
-      setState(newValue);
+      // update localStorage and simulate storage event
+      localStorage.setItem("test", "new value");
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key: "test",
+        })
+      );
     });
 
-    expect(localStorage.setItem).toHaveBeenLastCalledWith("test", newValue);
-    expect(localStorage.__STORE__["test"]).toBe(newValue);
-    expect(result.current[0]).toBe(newValue);
+    expect(result.current[0]).toBe("new value");
+  });
+
+  test("the event handler function is removed when the component unmounts", () => {
+    const spy = jest.spyOn(window, "removeEventListener");
+    const { unmount } = renderHook(() => useLocalStorage("test"));
+    unmount();
+    expect(spy).toHaveBeenCalledWith("storage", expect.any(Function));
   });
 });
