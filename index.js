@@ -1,11 +1,3 @@
-export function makeEmojiList(minutes) {
-  const interval = minutes < 30 ? 5 : 10;
-  const emoji = minutes < 30 ? "☕️" : "🍱";
+import codegen from "codegen.macro";
 
-  let emojis = "";
-  for (let i = 0; i < minutes; i += interval) {
-    emojis += emoji;
-  }
-
-  return emojis;
-}
+codegen`module.exports = require('@ihollander/workshop-app/codegen')`;

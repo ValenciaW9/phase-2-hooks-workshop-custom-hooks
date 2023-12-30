@@ -21,19 +21,6 @@ export function useLocalStorage(key, initialValue = null) {
     setLocalStorageValue(key, state);
   }, [key, state]);
 
-  useEffect(() => {
-    function handleChange() {
-      const newValue = getLocalStorageValue(key);
-      setState(newValue);
-    }
-
-    window.addEventListener("storage", handleChange);
-
-    return function cleanup() {
-      window.removeEventListener("storage", handleChange);
-    };
-  }, [key]);
-
   return [state, setState];
 }
 
@@ -50,7 +37,7 @@ export default function App() {
 }
 
 function Form() {
-  const [name, setName] = useLocalStorage("_solution_3_username", "");
+  const [name, setName] = useLocalStorage("_solution_2_username", "");
   return (
     <form style={{ display: "flex", flexDirection: "column" }}>
       <label htmlFor="name">Name:</label>
@@ -61,7 +48,7 @@ function Form() {
 }
 
 function FormWithObject() {
-  const [formData, setFormData] = useLocalStorage("_solution_3_blog_post", {
+  const [formData, setFormData] = useLocalStorage("_solution_2_blog_post", {
     title: "",
     content: "",
   });
