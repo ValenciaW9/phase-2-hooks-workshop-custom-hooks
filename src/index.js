@@ -1,3 +1,12 @@
-import codegen from "codegen.macro";
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import "./index.css";
+import App from "./components/App";
 
-codegen`module.exports = require('@ihollander/workshop-app/codegen')`;
+ReactDOM.render(
+  <Router>
+    <App />
+  </Router>,
+  document.getElementById("root")
+);
